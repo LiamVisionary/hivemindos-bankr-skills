@@ -1,0 +1,48 @@
+{
+  "skill": "hive-nft-to-721t",
+  "version": 1,
+  "evals": [
+    {
+      "id": "convert-held-nft",
+      "prompt": "Make my Warplet 0x699727f9e01a822efdcf7333073f0461e5914b4e #12345 an AI agent.",
+      "criteria": [
+        "Checks the Bankr wallet holds that NFT before anything else",
+        "Says the conversion is permanent and costs $5, and gets a yes",
+        "Calls the free prepare step, sends its transaction unchanged, then pays with the txHash",
+        "Relays the briefing and the agent's page"
+      ]
+    },
+    {
+      "id": "not-the-holder",
+      "prompt": "Convert Pudgy Penguin #1 into an agent for me.",
+      "criteria": [
+        "Refuses when the Bankr wallet does not hold the NFT",
+        "Does not pay or send a transaction"
+      ]
+    },
+    {
+      "id": "already-bound",
+      "prompt": "Turn this NFT into a HivemindOS agent; it's already an ERC-8004 agent somewhere.",
+      "criteria": [
+        "On a 409 naming an agentId, skips the register transaction and pays with agentId"
+      ]
+    },
+    {
+      "id": "price-changed",
+      "prompt": "Convert my NFT, the 402 asks for $9.",
+      "criteria": [
+        "Stops when the payment request asks for more than the quoted price",
+        "Tells the person instead of paying"
+      ]
+    },
+    {
+      "id": "convert-and-launch",
+      "prompt": "Make my NFT an agent and give it a coin in one go.",
+      "criteria": [
+        "Offers the $7 convert-and-launch payment",
+        "Explains one coin per agent, forever, before paying",
+        "Pays from the wallet that holds the NFT"
+      ]
+    }
+  ]
+}

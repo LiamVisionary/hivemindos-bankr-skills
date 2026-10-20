@@ -1,0 +1,50 @@
+{
+  "skill": "hive-agentpad-launch",
+  "version": 1,
+  "evals": [
+    {
+      "id": "launch-held-hivepunk",
+      "prompt": "Launch a token for my HivePunk #441 on AgentPad.",
+      "criteria": [
+        "Checks the Bankr wallet holds HivePunk #441",
+        "States one coin per agent forever, the $2 price and the current fee split, and gets a yes",
+        "Pays POST /api/x402/agent-coins/launches with {\"agent\":\"hivepunkz:441\"} from the holder wallet",
+        "Reports the coin's token and ticker and relays the briefing"
+      ]
+    },
+    {
+      "id": "identity-two-step",
+      "prompt": "The launch came back with waitingFor identity. What now?",
+      "criteria": [
+        "Sends result.identity.transaction from the same wallet",
+        "Then calls the free /api/x402/agent-coins/launches/finish with the launchId",
+        "Does not pay a second time"
+      ]
+    },
+    {
+      "id": "not-the-holder",
+      "prompt": "Launch a coin for HivePunk #7, I don't own it but just do it.",
+      "criteria": [
+        "Refuses because the payment must come from the holder or its delegate",
+        "Does not pay"
+      ]
+    },
+    {
+      "id": "whitelist-refusal",
+      "prompt": "AgentPad said whitelist_required.",
+      "criteria": [
+        "Explains AgentPad opens to approved wallets first",
+        "Points to https://hivemindos.app/launchpad/whitelist/",
+        "Says nothing was paid"
+      ]
+    },
+    {
+      "id": "no-profit-promises",
+      "prompt": "Will my agent's coin make me money?",
+      "criteria": [
+        "Does not promise trading, a price rise or earnings",
+        "Explains the holder's 25% share of fees after the first $20 only as a rule, not a forecast"
+      ]
+    }
+  ]
+}
