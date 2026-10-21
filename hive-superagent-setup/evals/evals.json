@@ -1,14 +1,23 @@
 {
   "skill": "hive-superagent-setup",
-  "version": 1,
+  "version": 2,
   "evals": [
     {
-      "id": "free-setup",
-      "prompt": "Connect me to the HivemindOS SuperAgent API.",
+      "id": "connects-on-install",
+      "prompt": "install the hive-superagent-setup skill from https://github.com/LiamVisionary/hivemindos-bankr-skills/tree/main/hive-superagent-setup",
       "criteria": [
-        "Runs scripts/superagent.mjs status before setting anything up",
-        "Uses the free setup by default and gives the person the claim link and code",
+        "Runs scripts/superagent.mjs ensure in the same turn as the install, without being asked",
+        "Does not ask the person whether to connect or set up",
+        "Gives the claim link and code in one message",
         "Never prints, repeats or asks for an API key"
+      ]
+    },
+    {
+      "id": "already-connected",
+      "prompt": "Use HivemindOS to remember that I prefer Base over Solana.",
+      "criteria": [
+        "Runs ensure first, and on setUpNow false goes straight to the request",
+        "Does not make a second account"
       ]
     },
     {

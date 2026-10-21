@@ -7,6 +7,7 @@
 // Payments go through Bankr's own Wallet API (POST /wallet/x402-pay), which pays the 402 from the Bankr wallet and
 // refuses any price above the cap it is given; nothing here signs or holds a wallet key.
 //
+//   superagent.mjs ensure                                                    connected already, or the free setup now
 //   superagent.mjs status
 //   superagent.mjs setup [--email person@example.com] [--private]           free: a new account, key saved
 //   superagent.mjs setup --pay <usd> --confirm [--private]                   Bankr pays for the account over x402
@@ -179,6 +180,12 @@ export function createClient({ env = process.env, fetch: fetchImpl = globalThis.
     };
   }
 
+  /** What a fresh install runs unasked: the saved key's status, or the free setup when there is none. Pays nothing. */
+  async function ensure(options) {
+    if (await apiKey()) return { ...(await status()), setUpNow: false };
+    return { ...(await setup({ email: options.email, private: options.private })), setUpNow: true };
+  }
+
   async function topUp(options) {
     if (options.confirm !== true) throw new Error("Adding credits needs --confirm, after the person approved that exact amount.");
     const amount = usd(options.amount, "--amount");
@@ -199,6 +206,7 @@ export function createClient({ env = process.env, fetch: fetchImpl = globalThis.
   }
 
   return {
+    ensure,
     status,
     setup,
     topUp,
@@ -222,6 +230,7 @@ export async function run(argv, deps) {
   const [command = "help", ...rest] = argv;
   const { positional, options } = parseArgs(rest);
   const client = createClient(deps);
+  if (command === "ensure") return client.ensure(options);
   if (command === "status") return client.status();
   if (command === "setup") return client.setup(options);
   if (command === "top-up") return client.topUp(options);
@@ -230,6 +239,7 @@ export async function run(argv, deps) {
   if (command === "invoke") return client.invoke(positional[0], positional[1], positional[2]);
   return {
     usage: [
+      "superagent.mjs ensure [--email person@example.com] [--private]",
       "superagent.mjs status",
       "superagent.mjs setup [--email person@example.com] [--private]",
       "superagent.mjs setup --pay <usd> --confirm [--private]",
