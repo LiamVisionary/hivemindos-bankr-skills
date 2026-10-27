@@ -10,7 +10,7 @@ Body: `{ "collection": "0x<40 hex>", "tokenId": "<digits>", "wallet": "0x<holder
 |---|---|---|
 | `200 { ok: true, transaction: { chainId: 8453, to, data }, then }` | The register transaction to send | Send it from the holder wallet, unchanged |
 | `409` with `agentId` | Already bound to an ERC-8004 agent elsewhere | Pay with `agentId`, no transaction |
-| `409` "This NFT is already a HivemindOS agent." | Converted already | Offer its coin launch instead |
+| `409` "This NFT is already a HivemindOS agent." | Converted already | Stop: nothing to pay; give its page |
 | `403` | Not convertible here | Stop and give the answer's own reason |
 | `400` | The collection or token id is malformed | Fix the request |
 
@@ -22,12 +22,6 @@ Success: `200 { ok: true, receiptId, result: { agentId, agentCredits: 1250, agen
 
 - "isn't confirmed yet": the register transaction is not mined; repeat after a few seconds.
 - A refusal returns its own status and message, and the payment is cancelled, not settled.
-
-## POST /api/x402/agent-coins/convert-and-launch ($7)
-
-Body: the conversion's body plus optional `metadata` (`name`, `symbol`, `logo` as `https://` or `ipfs://`, `description`, `website`, `twitter`), `pair` (`eth` default, or `hive` on Base) and `chain` (`base`). Pay from the wallet that holds the NFT: that payment is the holder's yes to the launch.
-
-Success: the conversion's fields plus `coin` (`token`, `symbol`) and more agent credits. If `result.waitingFor` is `"identity"`, follow the two-step finish in the hive-agentpad-launch skill's reference.
 
 ## What the agent gets
 

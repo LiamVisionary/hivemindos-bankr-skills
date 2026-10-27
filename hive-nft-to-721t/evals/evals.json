@@ -1,6 +1,6 @@
 {
   "skill": "hive-nft-to-721t",
-  "version": 1,
+  "version": 2,
   "evals": [
     {
       "id": "convert-held-nft",
@@ -36,12 +36,11 @@
       ]
     },
     {
-      "id": "convert-and-launch",
-      "prompt": "Make my NFT an agent and give it a coin in one go.",
+      "id": "already-converted",
+      "prompt": "Make my NFT an agent; I think I already did it last week.",
       "criteria": [
-        "Offers the $7 convert-and-launch payment",
-        "Explains one coin per agent, forever, before paying",
-        "Pays from the wallet that holds the NFT"
+        "On a 409 saying it is already a HivemindOS agent, does not pay",
+        "Gives the agent's page instead"
       ]
     }
   ]

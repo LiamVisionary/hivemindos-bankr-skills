@@ -1,8 +1,8 @@
 ---
 name: hive-nft-to-721t
-description: Turn an NFT on Base that the Bankr wallet holds into a HivemindOS AI agent (an ERC-8004 agent under the 721T standard, with its own credits, wallet and public chat that move with the NFT), paid in USDC over x402 from the Bankr wallet, optionally launching its AgentPad coin in the same payment.
+description: Turn an NFT on Base that the Bankr wallet holds into a HivemindOS AI agent (an ERC-8004 agent under the 721T standard, with its own credits, wallet and public chat that move with the NFT), paid in USDC over x402 from the Bankr wallet.
 tags: [hivemindos, nft, 721t, erc-8004, agents, x402, base]
-version: 1
+version: 2
 visibility: public
 metadata:
   clawdbot:
@@ -28,7 +28,7 @@ No API key or Env Var is needed: you use the Bankr wallet's own transaction and 
 2. Check the Bankr wallet holds it. If it does not, stop: the register transaction must come from the holder's wallet.
 3. Tell the person what is permanent and what it costs, and get a clear yes:
    - The NFT becomes an agent. That cannot be undone.
-   - **$5 in USDC on Base** for the conversion. Or **$7** for the conversion and its coin launch together (AgentPad: one coin per agent, ever). See the hive-agentpad-launch skill for what a coin is before offering it.
+   - **$5 in USDC on Base** for the conversion.
    - The price in the payment request is authoritative. If it asks for more than you quoted, stop and tell the person.
 
 ## The steps
@@ -39,14 +39,12 @@ All calls go to `https://hivemindos-paid-agent-gateway.hivemindos.workers.dev`.
    `POST /api/x402/agent-conversions/prepare` with `{"collection":"0x<contract>","tokenId":"<id>","wallet":"0x<the Bankr wallet>"}`.
    - `200`: `transaction` is `{ chainId: 8453, to, data }`. Nothing is charged.
    - `409` naming an `agentId`: the NFT is already an ERC-8004 agent. Skip step 2 and pay in step 3 with that `agentId` instead of `txHash`.
-   - `409` "already a HivemindOS agent": it is converted already. Offer the coin launch instead (hive-agentpad-launch).
+   - `409` "already a HivemindOS agent": it is converted already. Say so and give its page at hivemindos.app; there is nothing to pay.
    - `403`, or a HivePunk or Looper: this NFT cannot be converted here. Say why, in the answer's own words.
 2. **Send that transaction** from the Bankr wallet exactly as given (same `to`, `data`, chain 8453, no value) and wait for it to confirm. Keep its hash.
-3. **Pay over x402** with a cap of the quoted price:
-   - Conversion only: `POST /api/x402/agent-conversions` with `{"collection","tokenId","txHash"}` (or `agentId`), **$5**.
-   - With the coin: `POST /api/x402/agent-coins/convert-and-launch` with the same body plus optional `metadata` (`name`, `symbol`, `logo`, `description`, `website`, `twitter`), `pair` and `chain`, **$7**.
+3. **Pay over x402** with a cap of the quoted price: `POST /api/x402/agent-conversions` with `{"collection","tokenId","txHash"}` (or `agentId`), **$5**.
    - "isn't confirmed yet": wait a few seconds and repeat the same call. A refused or failed call is not settled, so nothing is paid for it.
-4. **Report** from the answer: `result.agentId`, `result.agentCredits`, the agent's page (`result.agentPage`), the coin if one launched, the payment receipt and transaction hash, and pass on `result.briefing` to the person in your own words.
+4. **Report** from the answer: `result.agentId`, `result.agentCredits`, the agent's page (`result.agentPage`), the payment receipt and transaction hash, and pass on `result.briefing` to the person in your own words.
 
 Read [references/api.md](references/api.md) for every field and refusal.
 

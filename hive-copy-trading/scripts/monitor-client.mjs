@@ -7,7 +7,14 @@ const BASE_URL = "https://hivemindos-copy-trading-gateway.hivemindos.workers.dev
 const KEY_ENV = "HIVEMIND_COPY_TRADING_WALLET_KEY";
 const STATE_PATH = process.env.HIVEMIND_COPY_TRADING_STATE_PATH || ".hive-copy-trading-monitors.json";
 const RISK_ACK = "I understand copy trading can lose money";
-const FEE_ACK = "I authorize HivemindOS to charge the published $1 monitoring minimum every 30 days and up to 10% of each new realized profit on verified live copied trades";
+// The agreements, word for word, as hivemind-os src/shared/hive/core/copy-trading-terms.ts holds them (this script
+// ships alone and cannot import it; hivemind-os scripts/test-bankr-copy-trading-skill.mjs fails when they drift).
+// A new monitor confirms the current terms; one going live confirms the terms it started on.
+const FEE_ACK = "I authorize HivemindOS to charge the published $1 monitoring minimum every 30 days, 0.45% of each verified live copied trade, and up to 10% of each new realized profit on verified live copied trades";
+const PROFIT_SHARE_FEE_ACK = "I authorize HivemindOS to charge the published $1 monitoring minimum every 30 days and up to 10% of each new realized profit on verified live copied trades";
+const VOLUME_FEE_ACK = "I authorize HivemindOS to charge the published $1 monitoring minimum every 30 days and the uncapped 0.5% fee on each verified live copied trade";
+const TRADE_FEE_POLICY = "2026-10-21-bankr-profit-share-trade-fee-v5";
+const PROFIT_SHARE_POLICY = "2026-10-04-bankr-profit-share-v4";
 
 const [command = "help", ...rawArgs] = process.argv.slice(2);
 const args = parseArgs(rawArgs);
@@ -144,9 +151,20 @@ async function manageMonitor(commandName, options) {
     }
     const pricing = await request("/v1/pricing");
     if (pricing.ok !== true) throw new Error("Current hosted pricing is unavailable; live mode was not enabled.");
-    patch = { mode: "live", riskAcknowledgement: RISK_ACK, feeAcknowledgement: FEE_ACK };
+    const current = await authorizedRequest(monitor, "GET");
+    patch = { mode: "live", riskAcknowledgement: RISK_ACK, feeAcknowledgement: monitorAgreement(current) };
   }
   print(await authorizedRequest(monitor, "PATCH", patch));
+}
+
+/** The agreement for the terms a monitor started on, from the fee version its billing carries (the shared
+ *  copyTermsKindOfBilling rule: no version reads as the profit share alone, an unknown one as the 0.5%). */
+function monitorAgreement(current) {
+  const subscription = current && typeof current === "object" && current.subscription && typeof current.subscription === "object" ? current.subscription : current;
+  const version = subscription && subscription.billing && typeof subscription.billing.feePolicyVersion === "string" ? subscription.billing.feePolicyVersion : "";
+  if (version === TRADE_FEE_POLICY) return FEE_ACK;
+  if (!version || version === PROFIT_SHARE_POLICY) return PROFIT_SHARE_FEE_ACK;
+  return VOLUME_FEE_ACK;
 }
 
 async function authorizedRequest(monitor, method, body, suffix = "") {

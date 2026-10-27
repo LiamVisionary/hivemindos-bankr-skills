@@ -12,18 +12,10 @@ install the hive-superagent-setup skill from https://github.com/LiamVisionary/hi
 
 ### hive-nft-to-721t
 
-Turn an NFT on Base that the Bankr wallet holds into a HivemindOS AI agent (an ERC-8004 agent under the 721T standard, with its own credits, wallet and public chat that move with the NFT), paid in USDC over x402 from the Bankr wallet, optionally launching its AgentPad coin in the same payment.
+Turn an NFT on Base that the Bankr wallet holds into a HivemindOS AI agent (an ERC-8004 agent under the 721T standard, with its own credits, wallet and public chat that move with the NFT), paid in USDC over x402 from the Bankr wallet.
 
 ```text
 install the hive-nft-to-721t skill from https://github.com/LiamVisionary/hivemindos-bankr-skills/tree/main/hive-nft-to-721t
-```
-
-### hive-agentpad-launch
-
-Launch the AgentPad coin of a HivemindOS agent whose NFT the Bankr wallet holds (a HivePunk, a 721T agent, or an NFT made a HivemindOS agent), paid in USDC over x402 from that wallet, with liquidity locked and the coin's trading fees paying for the agent's thinking and its holder.
-
-```text
-install the hive-agentpad-launch skill from https://github.com/LiamVisionary/hivemindos-bankr-skills/tree/main/hive-agentpad-launch
 ```
 
 ### hive-copy-trading
